@@ -1,3 +1,24 @@
+/**
+ *
+ * @param _ // Tells TS that we know we aren't using this parameter but
+ *             still need him to be there in order to access the descriptor parameter
+ * @param _2 // Same as the above
+ * @param descriptor // Gets the original method so we can bind the "this" that will
+ *                      refer to the "this" of the Class, therefore so then we can
+ *                      access the Class properties values
+ */
+function autoBind(_: any, _2: string, descriptor: PropertyDescriptor) {
+    const originalMethod = descriptor.value;
+    const adjustedDescriptor: PropertyDescriptor = {
+        configurable: true,
+        get() {
+            const boundFn = originalMethod.bind(this);
+            return boundFn;
+        },
+    };
+    return adjustedDescriptor;
+}
+
 class ProjectInput {
     /**
      * Properties to store HTML elements from the index.html
@@ -45,20 +66,19 @@ class ProjectInput {
         this.attach();
     }
 
+    /**
+     * We are able to get the Class properties values in this method because of the autoBind decorator.
+     * The autoBind decorator binds the Class properties values to this method
+     */
+    @autoBind
     private submitHandler(event: Event) {
         event.preventDefault();
 
-        /**
-         * If we try to access the class properties whithin this method we won't be able to get the value
-         * of them the solution would be to bind the when we call the method
-         * By adding the bind we can then tell TS that the "this" will refer to the "this" of the class
-         * therefore we can access the class properties values
-         */
         console.log(this.titleInputElement.value);
     }
 
     private configure() {
-        this.element.addEventListener('submit', this.submitHandler.bind(this));
+        this.element.addEventListener('submit', this.submitHandler);
     }
 
     private attach() {
