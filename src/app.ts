@@ -9,6 +9,13 @@ class ProjectInput {
     hostElement: HTMLDivElement;
     element: HTMLFormElement;
 
+    /**
+     * Form fields
+     */
+    titleInputElement: HTMLInputElement;
+    descriptionInputElement: HTMLInputElement;
+    peopleInputElement: HTMLInputElement;
+
     constructor() {
         /**
          * By using the ! at the end we're telling TS that it will never be null
@@ -23,7 +30,35 @@ class ProjectInput {
          */
         const importedNode = document.importNode(this.templateElement.content, true);
         this.element = importedNode.firstElementChild as HTMLFormElement;
+        this.element.id = 'user-input';
+
+        /**
+         * Store form fields into indiviual properties
+         */
+        this.titleInputElement = this.element.querySelector('#title') as HTMLInputElement;
+        this.descriptionInputElement = this.element.querySelector(
+            '#description'
+        ) as HTMLInputElement;
+        this.peopleInputElement = this.element.querySelector('#people') as HTMLInputElement;
+
+        this.configure();
         this.attach();
+    }
+
+    private submitHandler(event: Event) {
+        event.preventDefault();
+
+        /**
+         * If we try to access the class properties whithin this method we won't be able to get the value
+         * of them the solution would be to bind the when we call the method
+         * By adding the bind we can then tell TS that the "this" will refer to the "this" of the class
+         * therefore we can access the class properties values
+         */
+        console.log(this.titleInputElement.value);
+    }
+
+    private configure() {
+        this.element.addEventListener('submit', this.submitHandler.bind(this));
     }
 
     private attach() {
