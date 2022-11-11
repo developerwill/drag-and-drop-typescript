@@ -64,6 +64,30 @@ class ProjectInput {
         this.attach();
     }
 
+    // This method returns a tuple of 2 strings and a number
+    private gatherUserInput(): [string, string, number] | void {
+        const enteredTitle = this.titleInputElement.value;
+        const enteredDescription = this.descriptionInputElement.value;
+        const enteredPeople = this.peopleInputElement.value;
+
+        if (
+            enteredTitle.trim().length === 0 ||
+            enteredDescription.trim().length === 0 ||
+            enteredPeople.trim().length === 0
+        ) {
+            alert('Invalid input, please try again!');
+            return;
+        } else {
+            return [enteredTitle, enteredDescription, +enteredPeople]; // Returns a tuple. The + sign before the variable converts to int
+        }
+    }
+
+    private clearInputs() {
+        this.titleInputElement.value = '';
+        this.descriptionInputElement.value = '';
+        this.peopleInputElement.value = '';
+    }
+
     /**
      * We are able to get the Class properties values in this method because of the autoBind decorator.
      * The autoBind decorator binds the Class properties values to this method
@@ -71,8 +95,17 @@ class ProjectInput {
     @autoBind
     private submitHandler(event: Event) {
         event.preventDefault();
+        const userInput = this.gatherUserInput();
 
-        console.log(this.titleInputElement.value);
+        /**
+         * Since tuple doesn't exist in vanilla javascript we have to check the values like this
+         */
+        if (Array.isArray(userInput)) {
+            const [title, desc, people] = userInput;
+
+            console.log(title, desc, people);
+            this.clearInputs();
+        }
     }
 
     private configure() {
