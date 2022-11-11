@@ -4,8 +4,8 @@
  *             still need him to be there in order to access the descriptor parameter
  * @param _2 // Same as the above
  * @param descriptor // Gets the original method so we can bind the "this" that will
- *                      refer to the "this" of the Class, therefore so then we can
- *                      access the Class properties values
+ *                      refer to the "this" of the Class, after that we can access
+ *                      the Class properties values
  */
 function autoBind(_: any, _2: string, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
@@ -54,12 +54,10 @@ class ProjectInput {
         this.element.id = 'user-input';
 
         /**
-         * Store form fields into indiviual properties
+         * Stores form fields into indiviual properties
          */
         this.titleInputElement = this.element.querySelector('#title') as HTMLInputElement;
-        this.descriptionInputElement = this.element.querySelector(
-            '#description'
-        ) as HTMLInputElement;
+        this.descriptionInputElement = this.element.querySelector('#description') as HTMLInputElement;
         this.peopleInputElement = this.element.querySelector('#people') as HTMLInputElement;
 
         this.configure();
