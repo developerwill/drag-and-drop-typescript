@@ -1,9 +1,50 @@
 /**
+ * Validation logic
+ * Interface describes an object
+ */
+interface Validatable {
+    value: string | number;
+    required: boolean;
+    minLength?: number;
+    maxLength?: number;
+    min?: number;
+    max?: number;
+}
+
+function validate(validatableInput: Validatable) {
+    let isValid = true;
+
+    if (validatableInput.required) {
+        // If what's after the && it's false then javascript returns false
+        // Since we can have either string or number as "value" then we have to convert the "value" into a string before trying to trim it
+        isValid = isValid && validatableInput.value.toString().trim().length !== 0;
+    }
+
+    if(validatableInput.minLength != null && typeof validatableInput.value === 'string') {
+        isValid = isValid && validatableInput.value.length >= validatableInput.minLength;
+    }
+
+    if(validatableInput.maxLength != null && typeof validatableInput.value === 'string') {
+        isValid = isValid && validatableInput.value.length <= validatableInput.maxLength;
+    }
+
+    if(validatableInput.min != null && typeof validatableInput.value === 'number') {
+        isValid = isValid && validatableInput.value >= validatableInput.min;
+    }
+
+    if(validatableInput.max != null && typeof validatableInput.value === 'number') {
+        isValid = isValid && validatableInput.value <= validatableInput.max;
+    }
+
+    return isValid;
+}
+
+/**
  *
  * @param _ // Tells TS that we know we aren't using this parameter but
  *             still need him to be there in order to access the descriptor parameter
  * @param _2 // Same as the above
- * @param descriptor // Gets the original method so we can bind the "this" that will
+ * @param descriptor // Gets the original method, so we can bind the "this" that will
  *                      refer to the "this" of the Class, after that we can access
  *                      the Class properties values
  */
@@ -12,8 +53,7 @@ function autoBind(_: any, _2: string, descriptor: PropertyDescriptor) {
     const adjustedDescriptor: PropertyDescriptor = {
         configurable: true,
         get() {
-            const boundFn = originalMethod.bind(this);
-            return boundFn;
+            return originalMethod.bind(this);
         },
     };
     return adjustedDescriptor;
@@ -24,7 +64,7 @@ class ProjectInput {
      * Properties to store HTML elements from the index.html
      * templateElement = template#project-input
      * hostElement = div#app
-     * element = form inside of the template#project-input
+     * element = form inside the template#project-input
      */
     templateElement: HTMLTemplateElement;
     hostElement: HTMLDivElement;
@@ -40,7 +80,7 @@ class ProjectInput {
     constructor() {
         /**
          * By using the ! at the end we're telling TS that it will never be null
-         * We also must tell TS the type of the we're getting from the HTML element and for that we use type casting
+         * We also must tell TS the type of they're getting from the HTML element and for that we use type casting
          */
         this.templateElement = document.getElementById('project-input')! as HTMLTemplateElement;
         this.hostElement = document.getElementById('app')! as HTMLDivElement;
@@ -54,7 +94,7 @@ class ProjectInput {
         this.element.id = 'user-input';
 
         /**
-         * Stores form fields into indiviual properties
+         * Stores form fields into individual properties
          */
         this.titleInputElement = this.element.querySelector('#title') as HTMLInputElement;
         this.descriptionInputElement = this.element.querySelector('#description') as HTMLInputElement;
@@ -70,10 +110,28 @@ class ProjectInput {
         const enteredDescription = this.descriptionInputElement.value;
         const enteredPeople = this.peopleInputElement.value;
 
+        const titleValidatable: Validatable = {
+            value: enteredTitle,
+            required: true
+        };
+
+        const descriptionValidatable: Validatable = {
+            value: enteredDescription,
+            required: true,
+            minLength: 5
+        };
+
+        const peopleValidatable: Validatable = {
+            value: +enteredPeople,
+            required: true,
+            min: 1,
+            max: 5
+        };
+
         if (
-            enteredTitle.trim().length === 0 ||
-            enteredDescription.trim().length === 0 ||
-            enteredPeople.trim().length === 0
+            !validate(titleValidatable) ||
+            !validate(descriptionValidatable) ||
+            !validate(peopleValidatable)
         ) {
             alert('Invalid input, please try again!');
             return;
@@ -114,7 +172,7 @@ class ProjectInput {
 
     private attach() {
         /**
-         * Inserts the propery "element" html content into the property "hostElement"
+         * Inserts the property "element" html content into the property "hostElement"
          */
         this.hostElement.insertAdjacentElement('afterbegin', this.element);
     }
