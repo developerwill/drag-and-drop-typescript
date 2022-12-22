@@ -60,7 +60,19 @@ class ProjectState extends State<Project>{
         );
 
         this.projects.push(newProject);
+        this.updateListeners();
+    }
 
+    moveProject(projectId: string, newStatus: ProjectStatus) {
+        const project = this.projects.find(project => project.id === projectId);
+
+        if(project && project.status !== newStatus) {
+            project.status = newStatus;
+            this.updateListeners();
+        }
+    }
+
+    private updateListeners() {
         for (const listenerFn of this.listeners) {
             listenerFn(this.projects.slice());
         }
@@ -224,8 +236,10 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> implements Drag
         listEl.classList.remove('droppable');
     }
 
-    dropHandler(_: DragEvent): void {
-
+    @autoBind
+    dropHandler(event: DragEvent): void {
+        const projectId = event.dataTransfer!.getData('text/plain');
+        state.moveProject(projectId, this.type === 'active' ? ProjectStatus.Active : ProjectStatus.Finished);
     }
 
     configure(): void {
