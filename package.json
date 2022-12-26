@@ -10,7 +10,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lite-server": "lite-server",
     "ts-compiler": "tsc -w",
-    "start": "npm-run-all --parallel lite-server ts-compiler"
+    "start": "npm-run-all --parallel lite-server ts-compiler",
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
