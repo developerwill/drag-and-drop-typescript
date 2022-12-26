@@ -1,4 +1,4 @@
-export abstract class Component<T extends HTMLElement, U extends HTMLElement> {
+abstract class Component<T extends HTMLElement, U extends HTMLElement> {
     templateElement: HTMLTemplateElement;
     hostElement: T;
     element: U;
@@ -27,3 +27,5 @@ export abstract class Component<T extends HTMLElement, U extends HTMLElement> {
     abstract configure(): void;
     abstract renderContent(): void;
 }
+
+export default Component;
