@@ -12,7 +12,7 @@
     "ts-compiler": "tsc -w",
     "old-start": "npm-run-all --parallel webpack-serve ts-compiler",
     "start": "webpack serve",
-    "build": "webpack"
+    "build": "webpack --config webpack.config.prod.js"
   },
   "repository": {
     "type": "git",
@@ -26,6 +26,7 @@
   "homepage": "https://github.com/developerwill/drag-and-drop-typescript#readme",
   "description": "",
   "devDependencies": {
+    "clean-webpack-plugin": "^4.0.0",
     "ts-loader": "^9.4.2",
     "typescript": "^4.9.4",
     "webpack": "^5.75.0",
